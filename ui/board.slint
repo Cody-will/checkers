@@ -1,0 +1,65 @@
+import {VerticalBox} from "std-widgets.slint";
+
+export struct Position {
+      row: int,
+      col: int,
+  }
+
+export component Board inherits VerticalBox {
+      in property <image> red-base: @image-url("assets/red_piece.png");
+      in property <image> red-king: @image-url("assets/red_king.png");
+      in property <image> black-base: @image-url("assets/black_piece.png");
+      in property <image> black-king: @image-url("assets/black_king.png");
+      in property <[int]> board;
+      property <color> red: #FF0000;
+      property <color> black: #000000;
+      callback player_move(Position);
+      
+      VerticalBox{
+        spacing: 0px;
+        Rectangle {
+          border-width: 3px;
+          border-radius: 12px;
+          border-color: #737373;
+          clip: true;
+       
+          VerticalBox {
+            spacing: 0px;
+            padding: 0px;
+            for row in 8: HorizontalLayout {
+              spacing: 0px;
+            
+              for col in 8: Rectangle {
+                property <int> index: row * 8 + col;
+                in-out property <Position> pos: {row: row, col: col};
+                property <bool> is-playable: Math.mod((row + col), 2) != 0;
+                background: is-playable ? root.black : root.red;
+                border-width: zone.has-hover && is-playable ? 2px : 0px;
+                border-color: #00AA00;
+
+                zone := TouchArea {
+                    enabled: is-playable; 
+                    width: parent.width;
+                    height: parent.height;
+                    clicked => {root.player_move(parent.pos);}
+                }
+             
+                if board[index] != 0: Image{
+                 source:
+                    board[index] == 1 ? root.red-base :
+                    board[index] == 2 ? root.red-king :
+                    board[index] == 3 ? root.black-base :
+                    board[index] == 4 ? root.black-king :
+                    @image-url("");
+                  width: parent.width * 0.85;
+                  height: parent.height * 0.85;
+                  horizontal-alignment: center;
+                  vertical-alignment: center;
+                }    
+                    
+              }
+            }
+          }
+        }
+      }
+  }

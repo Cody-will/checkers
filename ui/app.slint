@@ -1,0 +1,19 @@
+import {Board} from "board.slint";
+import { VerticalBox } from "std-widgets.slint";
+import {Position} from "./board.slint";
+
+export component AppWindow inherits Window {
+    width: 820px;
+    height: 820px;
+    title: "Checkers";
+    background: #0f172a;
+    
+    in property <[int]> board;
+    callback player_move(Position); 
+    Board{
+      board: root.board;
+      player_move(pos) => {root.player_move(pos);}
+    } 
+
+
+  }
