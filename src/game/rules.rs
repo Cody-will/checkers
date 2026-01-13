@@ -1,6 +1,5 @@
 use crate::game::types::{Position, PlayerSide, Direction, PlayerMove};
 use crate::game::board::Board;
-use crate::game::play::Game;
 
 #[derive(Debug, Clone)]
 pub enum ForcedMoveState {
@@ -9,15 +8,11 @@ pub enum ForcedMoveState {
     ContinuingCombo { from: Position },
 }
 
-pub fn make_move(_board: &Board, _player_move: PlayerMove, _game: &Game) {
-    // do something here
-}
-
 fn in_bounds(p: &Position) -> bool {
     (0..=7).contains(&p.row) && (0..=7).contains(&p.col)
 }
 
-fn get_moves(board: &Board, side: PlayerSide) -> (Vec<PlayerMove>, ForcedMoveState) {
+pub fn get_moves(board: &Board, side: &PlayerSide) -> (Vec<PlayerMove>, ForcedMoveState) {
     let mut slides_all: Vec<PlayerMove> = Vec::new();
     let mut jumps_all: Vec<PlayerMove> = Vec::new();
     let mut jumps_from: Vec<Position> = Vec::new();
@@ -25,12 +20,12 @@ fn get_moves(board: &Board, side: PlayerSide) -> (Vec<PlayerMove>, ForcedMoveSta
     for row in 0..8 {
         for col in 0..8 {
             let selected = Position::new(row, col);
-            if !board.get_value(&selected).is_players(&side) {
+            if !board.get_value(&selected).is_players(side) {
                 continue;
             }
 
-            let slides = get_slides(&selected, board, &side);
-            let jumps = get_jumps(&selected, board, &side);
+            let slides = get_slides(&selected, board, side);
+            let jumps = get_jumps(&selected, board, side);
 
             slides_all.extend(slides);
 
@@ -68,7 +63,7 @@ fn get_slides(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMo
     moves
 }
 
-fn get_jumps(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMove> {
+pub fn get_jumps(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMove> {
     let mut jumps = Vec::new();
     let dir = Direction::current(side);
 

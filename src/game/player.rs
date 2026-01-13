@@ -1,6 +1,6 @@
 use crate::game::types::{PlayerSide, Square};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Player {
     pub name: String,
     pub side: PlayerSide,
@@ -17,10 +17,17 @@ impl Player {
         self.captured.push(piece);
     }
 
+}
 
-
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum WinningPlayer {
+    None,
+    Winner {player: Player},
 }
 
 
-
-
+impl WinningPlayer {
+    pub fn set_winner(&mut self, winner: Player) -> Self {
+        Self::Winner { player: winner }
+    } 
+}

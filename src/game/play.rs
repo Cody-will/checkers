@@ -1,16 +1,18 @@
 use crate::game::board::Board;
-use crate::game::player::Player;
-use crate::game::types::{PlayerSide, GameStatus, UiHints};
-use crate::game::rules::ForcedMoveState;
+use crate::game::player::{ Player, WinningPlayer};
+use crate::game::types::{GameStatus, PlayerMove, PlayerSide, Position, PositionUsize, Square, UiHints};
+use crate::game::rules::{ForcedMoveState, get_moves, get_jumps};
 
 #[derive(Debug, Clone)]
 pub struct Game {
     pub board: Board,
     pub players: [Player; 2],
+    pub winner: WinningPlayer,
     pub turn: PlayerSide,
     pub forced: ForcedMoveState,
     pub status: GameStatus,
-    pub ui: UiHints,
+    pub available_moves: (Vec<PlayerMove>, ForcedMoveState)
+
 }
 
 impl Game {
@@ -19,16 +21,110 @@ impl Game {
         let player1 = Player::new(String::from("Player 1"), PlayerSide::Red);
         let player2 = Player::new(String::from("Player 2"), PlayerSide::Black);
         let players: [Player; 2] = [player1, player2];
-        let ui: UiHints = UiHints::new(&board);
-        Self {board, players, turn: PlayerSide::Red, forced: ForcedMoveState::None, status: GameStatus::InProgess, ui}
+        let turn = PlayerSide::Red;
+        let available_moves = get_moves(&board, &turn); 
+        Self { board, players, winner: WinningPlayer::None, turn, forced: ForcedMoveState::None, status: GameStatus::InProgess, available_moves }
+        
     }
 
-    pub fn start(&self) {
-         
-    }
+    pub fn sync_ui(&self) {
+        let ui = UiHints::new(self);
+    } 
 
     pub fn set_forced(&mut self, forced_state: ForcedMoveState) {
         self.forced = forced_state;
+    }
+
+    pub fn make_move(&mut self, player_move: PlayerMove) {
+        let(available, forced_state) = &mut self.available_moves;
+        match forced_state {
+            ForcedMoveState::None => {
+                if !available.contains(&player_move) { return; }
+
+                player_move.apply_move(&mut self.board);     
+                let is_winner = self.check_win();
+
+                self.turn = self.turn.switch();
+                self.available_moves = get_moves(&self.board, &self.turn); 
+                
+            },
+            ForcedMoveState::MustCapture { from } => {
+                if !from.contains(&player_move.from) { return; }
+
+                let new_position = player_move.apply_move(&mut self.board);
+                let jumped_piece = self.get_jumped(&player_move);
+                let curr_player = if self.players[0].side == self.turn {&mut self.players[0]} else {&mut self.players[1]};
+
+                curr_player.collect_piece(self.board.get_value(&jumped_piece));
+                self.remove_piece(&jumped_piece);
+                
+                let is_winner = self.check_win();
+
+                let jumps = get_jumps(&new_position, &self.board, &self.turn);
+
+                if !jumps.is_empty() {
+                    self.available_moves = (jumps, ForcedMoveState::ContinuingCombo { from: new_position });
+                } else {
+                    self.turn = self.turn.switch();
+                    self.available_moves = get_moves(&self.board, &self.turn);
+                }
+
+            }, 
+            ForcedMoveState::ContinuingCombo { from } => {
+                if *from != player_move.from { return; }
+
+                let new_position = player_move.apply_move(&mut self.board);
+                let jumped_piece = self.get_jumped(&player_move);
+                let curr_player = if self.players[0].side == self.turn {&mut self.players[0]} else {&mut self.players[1]};
+
+                curr_player.collect_piece(self.board.get_value(&jumped_piece));
+                self.remove_piece(&jumped_piece);
+
+                let is_winner = self.check_win();
+
+                let jumps = get_jumps(&new_position, &self.board, &self.turn);
+                
+                if !jumps.is_empty() {
+                    self.available_moves = (jumps, ForcedMoveState::ContinuingCombo { from: new_position });
+                } else {
+                    self.turn = self.turn.switch();
+                    self.available_moves = get_moves(&self.board, & self.turn);
+                }
+            }
+        }
+                 
+    }
+ 
+
+    fn get_jumped(&self, player_move: &PlayerMove) -> Position {
+        let PlayerMove {from, to} = player_move;
+        let r = to.row - from.row;
+        let c = to.col - from.col;
+        Position::new(from.row + r / 2, from.col + c / 2)
+    }
+
+    fn remove_piece(&mut self, position: &Position) {
+        let PositionUsize {row, col} = position.to_usize();
+        self.board.board[row][col] = Square::Empty;
+    }
+
+    fn check_win(&self) -> bool {
+        let mut win = true;
+        let opponent = self.turn.switch();
+        let available_moves = get_moves(&self.board, &opponent);
+        if available_moves.0.is_empty() { return win; }
+        for row in 0..8 {
+            for col in 0..8 {
+                let square = self.board.board[row][col];
+                if square.is_opponents(&self.turn) { win = false; break; }
+            }
+            if !win {break;}
+        }
+        win
+    }
+
+    fn handle_win(&mut self) {
+        self.status = GameStatus::Winning;
     }
  
 }

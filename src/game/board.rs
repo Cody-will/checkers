@@ -3,7 +3,7 @@ use crate::game::types::{Square, Position};
 
 #[derive(Debug, Clone)]
 pub struct Board {
-    board: Vec<Vec<Square>>,
+    pub board: Vec<Vec<Square>>,
 }
 
 impl Board {

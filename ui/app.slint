@@ -1,19 +1,21 @@
-import {Board} from "board.slint";
 import { VerticalBox } from "std-widgets.slint";
-import {Position} from "./board.slint";
+import {FlatUi, Player, Position, PlayerSide, Square} from "./structs.slint";
 
 export component AppWindow inherits Window {
     width: 820px;
     height: 820px;
     title: "Checkers";
     background: #0f172a;
+
+    in property <FlatUi> ui_hints;
+
+    callback player_move(Position);
     
-    in property <[int]> board;
-    callback player_move(Position); 
     Board{
-      board: root.board;
+      ui_hints: root.ui_hints;
+      
       player_move(pos) => {root.player_move(pos);}
     } 
 
 
-  }
+}

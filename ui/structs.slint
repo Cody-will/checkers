@@ -1,0 +1,25 @@
+
+export struct FlatUi {
+  board: [int],
+  selected: option<int>,
+  selectable: [bool],
+  targets: [bool],
+  players: [Player],
+  turn: PlayerSide,
+  }
+
+export struct Player {
+  name: string,
+  side: PlayerSide,
+  captured: [Square],
+  }
+
+export enum Square {RedBase, RedKing, BlackBase, BlackKing}
+
+export enum PlayerSide {Red, Black}
+
+export struct Position {
+      row: int,
+      col: int,
+  }
+

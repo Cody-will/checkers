@@ -1,15 +1,8 @@
 import {VerticalBox} from "std-widgets.slint";
-
-export struct Position {
-      row: int,
-      col: int,
-  }
+import {Position, FlatUi, Square, Player, } from "./structs.slint";
+import {red-base, red-king, black-base, black-king} from "./images.slint";
 
 export component Board inherits VerticalBox {
-      in property <image> red-base: @image-url("assets/red_piece.png");
-      in property <image> red-king: @image-url("assets/red_king.png");
-      in property <image> black-base: @image-url("assets/black_piece.png");
-      in property <image> black-king: @image-url("assets/black_king.png");
       in property <[int]> board;
       property <color> red: #FF0000;
       property <color> black: #000000;
