@@ -1,24 +1,23 @@
+export enum SlintSquare {RedBase, RedKing, BlackBase, BlackKing, Empty}
+
+export enum SlintPlayerSide {Red, Black}
+export struct ScreenSize {screen_width: int, screen_height: int}
+export struct SlintPlayer {
+  name: string,
+  side: SlintPlayerSide,
+  captured: [SlintSquare],
+  }
 
 export struct FlatUi {
   board: [int],
-  selected: option<int>,
+  selected: int,
   selectable: [bool],
   targets: [bool],
-  players: [Player],
-  turn: PlayerSide,
+  players: [SlintPlayer],
+  turn: SlintPlayerSide,
   }
 
-export struct Player {
-  name: string,
-  side: PlayerSide,
-  captured: [Square],
-  }
-
-export enum Square {RedBase, RedKing, BlackBase, BlackKing}
-
-export enum PlayerSide {Red, Black}
-
-export struct Position {
+export struct SlintPosition {
       row: int,
       col: int,
   }

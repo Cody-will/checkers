@@ -43,18 +43,30 @@ pub fn get_moves(board: &Board, side: &PlayerSide) -> (Vec<PlayerMove>, ForcedMo
     }
 }
 
+
+fn move_deltas(piece_is_king: bool, side: &PlayerSide) -> &'static [(i8, i8)] {
+    match (piece_is_king, Direction::current(side)) {
+        (true, _) => &[(-1, -1), (-1, 1), (1, -1), (1, 1)],
+        (false, Direction::Up) => &[(-1, -1), (-1, 1)],
+        (false, Direction::Down) => &[(1, -1), (1, 1)],
+    }
+}
+
 fn get_slides(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMove> {
     let mut moves = Vec::new();
-    let dir = Direction::current(side);
 
-        let deltas: &[(i8, i8)] = match dir {
-        Direction::Up => &[(-1, -1), (-1, 1)],
-        Direction::Down => &[(1, -1), (1, 1)],
-    };
+    let piece = board.get_value(from);
+    if piece.is_empty() || !piece.is_players(side) {
+        return moves;
+    }
+
+    let deltas = move_deltas(piece.is_king(), side);
 
     for (d_row, d_col) in deltas {
         let to = Position::new(from.row + d_row, from.col + d_col);
-        if !in_bounds(&to) { continue; }
+        if !in_bounds(&to) {
+            continue;
+        }
         if board.get_value(&to).is_empty() {
             moves.push(PlayerMove::new(from.clone(), to));
         }
@@ -65,22 +77,28 @@ fn get_slides(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMo
 
 pub fn get_jumps(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMove> {
     let mut jumps = Vec::new();
-    let dir = Direction::current(side);
 
-    let deltas: &[(i8, i8)] = match dir {
-        Direction::Up => &[(-1, -1), (-1, 1)],
-        Direction::Down => &[(1, -1), (1, 1)],
-    };
+    let piece = board.get_value(from);
+    if piece.is_empty() || !piece.is_players(side) {
+        return jumps;
+    }
+
+    let deltas = move_deltas(piece.is_king(), side);
 
     for (d_row, d_col) in deltas {
         let mid = Position::new(from.row + d_row, from.col + d_col);
-        let to  = Position::new(from.row + 2*d_row, from.col + 2*d_col);
+        let to = Position::new(from.row + 2 * d_row, from.col + 2 * d_col);
 
-        if !in_bounds(&mid) || !in_bounds(&to) { continue; }
+        if !in_bounds(&mid) || !in_bounds(&to) {
+            continue;
+        }
 
-        if board.get_value(&to).is_empty()
-            && !board.get_value(&mid).is_empty()
-            && !board.get_value(&mid).is_players(side)
+        let mid_square = board.get_value(&mid);
+        let to_square = board.get_value(&to);
+
+        if to_square.is_empty()
+            && !mid_square.is_empty()
+            && !mid_square.is_players(side)
         {
             jumps.push(PlayerMove::new(from.clone(), to));
         }
@@ -88,6 +106,7 @@ pub fn get_jumps(from: &Position, board: &Board, side: &PlayerSide) -> Vec<Playe
 
     jumps
 }
+
 
 
 

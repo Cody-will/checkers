@@ -9,12 +9,14 @@ pub struct Player {
 
 impl Player {
     pub fn new(name: String, side: PlayerSide) -> Self {
-        let captured: Vec<Square> = Vec::new();
+        let captured: Vec<Square> = vec![Square::Empty; 12];
         Self {name, side, captured}
     }
 
     pub fn collect_piece(&mut self, piece: Square) {
-        self.captured.push(piece);
+        self.captured.pop();
+        self.captured.insert(0, piece);
+
     }
 
 }

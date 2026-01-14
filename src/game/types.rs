@@ -1,6 +1,5 @@
 use crate::game::board::Board;
 use crate::game::play::Game;
-use crate::game::rules::ForcedMoveState;
 use crate::game::player::Player;
 
 
@@ -16,9 +15,10 @@ impl Position {
         Self {row, col}
     }
 
-    pub fn to_usize(&self) -> PositionUsize {
+    pub fn to_usize(self) -> PositionUsize {
         PositionUsize { row: self.row as usize, col: self.col as usize } 
     }
+ 
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -75,6 +75,21 @@ impl Square {
             Square::BlackBase => 3,
             Square::BlackKing => 4,
         }
+    }
+
+    pub fn to_king(self) -> Self {
+        match self {
+            Self::RedBase => Self::RedKing,
+            Self::BlackBase => Self::BlackKing,
+            Self::BlackKing => Self::BlackKing,
+            Self::RedKing => Self::RedKing,
+            Self::Empty => Self::Empty,
+
+        }
+    }
+
+    pub fn is_king(self) -> bool {
+        matches!(self, Self::BlackKing | Self::RedKing)    
     }
 
     pub fn is_empty(&self) -> bool {
@@ -139,22 +154,22 @@ impl PlayerMove {
 
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct FlatUi {
+pub struct SlintUi {
     pub board: Vec<i32>,
-    pub selected: Option<i32>,
+    pub selected: i32,
     pub selectable: Vec<bool>,
     pub targets: Vec<bool>,
     pub players: [Player; 2],
     pub turn: PlayerSide,
 }
 
-impl FlatUi {
+impl SlintUi {
     pub fn new(hints: &UiHints) -> Self {
-        let board = hints.board;
-        let selected: Option<i32> = match hints.selected {
-            Some(sel) => {let Position {row, col} = sel; Some((row * 8 + col) as i32)},
-            None => {None},
-        }
+        let board = hints.board.clone();
+        let selected: i32 = match hints.selected {
+            Some(sel) => {let Position {row, col} = sel; (row * 8 + col) as i32},
+            None => {-1},
+        };
         let (selectable, targets) = hints.flatten_available();
         let players = hints.players.clone();
         let turn = hints.turn;
@@ -174,21 +189,16 @@ pub struct UiHints {
 
 impl UiHints {
     pub fn new(game: &Game) -> Self {
-        let selected = None;
+        let selected = game.selected;
         let available = game.available_moves.0.clone();  
         let players = game.players.clone();
         let turn = game.turn;
 
         Self { selected, available, board: game.board.flatten(), players, turn }  
-    }
+    } 
 
-    pub fn update(&mut self, available_moves: &(Vec<PlayerMove>, ForcedMoveState)) {
-        self.selected = None;
-        self.available = available_moves.0.clone(); 
-    }
-
-    pub fn flatten_ui(&self) -> FlatUi { 
-        FlatUi::new(&self)
+    pub fn flatten_ui(&self) -> SlintUi { 
+        SlintUi::new(&self)
     }
 
     fn flatten_available(&self) -> (Vec<bool>, Vec<bool>) {

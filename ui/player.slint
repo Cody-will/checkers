@@ -1,0 +1,59 @@
+import { VerticalBox } from "std-widgets.slint";
+import {Theme} from "./config.slint";
+import {FlatUi, SlintPlayer, SlintPlayerSide, SlintSquare} from "./structs.slint";
+import {Images} from "./config.slint";
+
+export component PlayerBox inherits VerticalBox {
+  
+  in-out property <FlatUi> ui_hints;
+  in-out property <SlintPlayerSide> side;
+  property <SlintPlayer> player: ui_hints.players[0].side == side ? ui_hints.players[0] : ui_hints.players[1];
+  in-out property <int> piece_size;
+  horizontal-stretch: 1;
+   
+  
+  Rectangle {
+      background: Theme.background;
+      border-width: Theme.border_width;
+      border-radius: Theme.border_radius;
+      border-color: Theme.border_color;
+      horizontal-stretch: 1;
+      vertical-stretch: 1;
+      VerticalLayout {
+        padding: 4px;
+        Text {
+          text: player.name;
+          horizontal-alignment: center;
+          font-size: 32pt;         
+          color: player.side == ui_hints.turn ? #00FF00 : #FFFFFF;
+        }
+        for row in 6: HorizontalLayout {
+            horizontal-stretch: 1;
+            spacing: 0px;
+            for col in 2: Rectangle {
+                horizontal-stretch: 1;
+                vertical-stretch: 1;
+                property <int> index: row * 2 + col;
+                 
+                Image {
+                  
+                  source:
+                        player.captured[index] == SlintSquare.RedBase ? Images.red-base :
+                        player.captured[index] == SlintSquare.RedKing ? Images.red-king :
+                        player.captured[index] == SlintSquare.BlackBase ? Images.black-base :
+                        player.captured[index] == SlintSquare.BlackKing ? Images.black-king :
+                        @image-url("");
+                  vertical-alignment: center;
+                  horizontal-alignment: center;
+                  height: piece_size * 1px;
+                  width: piece_size * 1px;
+              }
+            }
+        }
+
+      }
+      
+      
+    } 
+   
+  }
