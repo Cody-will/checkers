@@ -14,8 +14,9 @@ impl Player {
     }
 
     pub fn collect_piece(&mut self, piece: Square) {
-        self.captured.pop();
-        self.captured.insert(0, piece);
+       if let Some(empty) = self.captured.iter_mut().rev().find(|sq| **sq == Square::Empty) {
+            *empty = piece;
+        } 
 
     }
 

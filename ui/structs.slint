@@ -1,7 +1,19 @@
 export enum SlintSquare {RedBase, RedKing, BlackBase, BlackKing, Empty}
 
+export enum CurrentView {
+  Lobby,
+  Game,
+  Winner,
+  }
+
+export struct View {
+  current_view: CurrentView,
+  }
+
 export enum SlintPlayerSide {Red, Black}
+
 export struct ScreenSize {screen_width: int, screen_height: int}
+
 export struct SlintPlayer {
   name: string,
   side: SlintPlayerSide,
@@ -11,7 +23,7 @@ export struct SlintPlayer {
 export struct FlatUi {
   board: [int],
   selected: int,
-  selectable: [bool],
+  selectable: [bool], 
   targets: [bool],
   players: [SlintPlayer],
   turn: SlintPlayerSide,
@@ -21,4 +33,5 @@ export struct SlintPosition {
       row: int,
       col: int,
   }
+
 

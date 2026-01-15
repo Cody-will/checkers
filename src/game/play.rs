@@ -28,7 +28,7 @@ impl Default for Game {
         let players: [Player; 2] = [player1, player2];
         let turn = PlayerSide::Red;
         let available_moves = get_moves(&board, &turn); 
-        Self { board, selected, players, winner: WinningPlayer::None, turn, forced: ForcedMoveState::None, status: GameStatus::InProgess, available_moves }
+        Self { board, selected, players, winner: WinningPlayer::None, turn, forced: ForcedMoveState::None, status: GameStatus::Game, available_moves }
         
     }
 }
@@ -164,7 +164,7 @@ impl Game {
     }
 
     fn handle_win(&mut self) {
-        self.status = GameStatus::Winning;
+        self.status = GameStatus::Winner;
     }
  
 }

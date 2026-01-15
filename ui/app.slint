@@ -1,17 +1,20 @@
 import { VerticalBox } from "std-widgets.slint";
 import {Board} from "./board.slint";
-import {FlatUi, ScreenSize, SlintPlayer, SlintPosition, SlintPlayerSide, SlintSquare} from "./structs.slint";
+import {FlatUi, View, CurrentView, ScreenSize, SlintPlayer, SlintPosition, SlintPlayerSide, SlintSquare} from "./structs.slint";
 import {Theme} from "./config.slint";
 import {PlayerBox} from "./player.slint";
+import {Game} from "./game.slint";
+import {Lobby} from "./lobby.slint";
 
 export component AppWindow inherits Window {
     width: s_width * 1px;
     height: s_height * 1px;
     title: "Checkers";
-    background: Theme.background;
+    background: Theme.background;   
 
     in property <FlatUi> ui_hints;
     in property <ScreenSize> screen_size;
+    in-out property <View> view;
     
     property <int> s_width: screen_size.screen_width * 0.85;
     property <int> s_height: screen_size.screen_height * 0.85;
@@ -22,35 +25,20 @@ export component AppWindow inherits Window {
 
     property <bool> is_red: ui_hints.turn == SlintPlayerSide.Red;
     callback player_move(SlintPosition);
-    HorizontalLayout {
-        width: parent.width;
-        height: parent.height;
-        horizontal-stretch: 1;
-                
-        PlayerBox {
-          ui_hints: root.ui_hints; 
-          side: SlintPlayerSide.Red;
-          horizontal-stretch: 1;
-          min-width: player_width * 1px;
-          piece_size: piece_size;
-          
-        }
-
-        Board {
-          height: board_size * 1px;
-          width: board_size * 1px;
-          ui_hints: root.ui_hints; 
-          player_move(pos) => {root.player_move(pos);}
-        }
-        
-        PlayerBox {
-          ui_hints: root.ui_hints; 
-          side: SlintPlayerSide.Black;
-          horizontal-stretch: 1;
-          min-width: player_width * 1px;
-          piece_size: piece_size;
-        }
+    
+    if view.current_view == CurrentView.Lobby: Lobby {
+      
     }
+  
+    if view.current_view == CurrentView.Game: Game {
+      board_size: board_size;
+      player_width: player_width;
+      p_width: parent.width;
+      p_height: parent.height;
+      piece_size: piece_size;
+      ui_hints: ui_hints;
+      player_move(pos) => {player_move(pos);}
+    } 
  
     
 

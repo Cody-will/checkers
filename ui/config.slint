@@ -1,20 +1,35 @@
 
 export global Images {
-  in property <image> red-base: @image-url("assets/red_piece.png");
-  in property <image> red-king: @image-url("assets/red_king.png");
-  in property <image> black-base: @image-url("assets/black_piece.png");
-  in property <image> black-king: @image-url("assets/black_king.png"); 
+  in property <image> red-base: @image-url("assets/red_man_2.png");
+  in property <image> red-king: @image-url("assets/red_king_2.png");
+  in property <image> black-base: @image-url("assets/black_man_2.png");
+  in property <image> black-king: @image-url("assets/black_king_2.png");
+  in property <image> logo: @image-url("assets/logo.png");
 }
 
 export global Theme {
   in property <color> red: #FF0000;
   in property <color> black: #000000;
-  in property <color> background: #0f172a;
-  in property <color> board-border: #737373;
-  in property <color> selectable-color: #FFFFFF;
-  in property <color> selected-color: #00EE00;
-  in property <color> hovered-color: #00FF00;
+  in property <color> background: ColorTheme.background;
+  in property <color> board-border: ColorTheme.color_2;
+  in property <color> selectable-color: ColorTheme.color_5;
+  in property <color> selected-color: ColorTheme.color_4;
+  in property <color> hovered-color: ColorTheme.color_6;
   in property <length> border_width: 3px;
   in property <length> border_radius: 12px;
-  in property <color> border_color: #737373;
+  in property <color> border_color: ColorTheme.color_2;
+  in property <color> text-color: ColorTheme.color_3;
+  in property <length> button-radius: 8px;
+  in property <color> button-hover: ColorTheme.color_2; // was 5
+  in property <color> button-color: ColorTheme.color_1; // was 2
+  }
+
+export global ColorTheme {
+  in property <color> background: #1D2D50;
+  in property <color> color_1: #133B5C;
+  in property <color> color_2: #1E5F74;
+  in property <color> color_3: #FCDAB7;
+  in property <color> color_4: #F4B860;
+  in property <color> color_5: #4DD6C9;
+  in property <color> color_6: #FAF3E0;
   }

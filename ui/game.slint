@@ -1,0 +1,41 @@
+import {PlayerBox} from "./player.slint";
+import {SlintPlayerSide, FlatUi, SlintPosition} from "./structs.slint";
+import {Board} from "./board.slint";
+
+export component Game inherits HorizontalLayout {
+        in-out property <length> p_width;
+        in-out property <length> p_height;
+        in-out property <FlatUi> ui_hints;
+        in-out property <int> player_width;
+        in-out property <int> piece_size;
+        in-out property <int> board_size;
+        callback player_move(SlintPosition);
+        
+        width: p_width;
+        height: p_height;
+        horizontal-stretch: 1;
+                
+        PlayerBox {
+          ui_hints: ui_hints; 
+          side: SlintPlayerSide.Red;
+          horizontal-stretch: 1;
+          min-width: player_width * 1px;
+          piece_size: piece_size;
+          
+        }
+
+        Board {
+          height: board_size * 1px;
+          width: board_size * 1px;
+          ui_hints: ui_hints; 
+          player_move(pos) => {player_move(pos);}
+        }
+        
+        PlayerBox {
+          ui_hints: ui_hints; 
+          side: SlintPlayerSide.Black;
+          horizontal-stretch: 1;
+          min-width: player_width * 1px;
+          piece_size: piece_size;
+        }
+    }

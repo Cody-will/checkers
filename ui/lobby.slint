@@ -1,0 +1,74 @@
+import { VerticalBox, Button } from "std-widgets.slint";
+import { Theme, Images } from "./config.slint";
+
+export component Lobby inherits VerticalBox {
+  
+  VerticalLayout {
+    height: parent.height / 2;
+    alignment: start;
+    HorizontalLayout {
+      alignment: center;
+      
+      Image {
+        source: Images.logo;
+        height: root.height * 0.75;
+        horizontal-alignment: center;
+        vertical-alignment: top;
+        }
+      
+
+      }
+    }
+
+  VerticalLayout {
+    height: parent.height / 2;
+    alignment: center;
+    spacing: 8px;
+    HorizontalLayout {
+      alignment: center;
+      Rectangle {
+        
+        height: root.height *0.05;
+        width: root.width * 0.15;
+        background: play-button.has-hover ? Theme.button-hover : Theme.button-color;
+        border-radius: Theme.button-radius;
+        Text {
+          text: "Play";
+          color: Theme.text-color;
+          font-size: 16pt;
+          font-weight: 600;
+          }
+
+        play-button:= TouchArea {
+          height: parent.height;
+          width: parent.width;
+          }
+
+        }
+      }
+
+      HorizontalLayout {
+        alignment: center;
+        Rectangle {
+          height: root.height * 0.05;
+          width: root.width * 0.15;
+        background: quit-button.has-hover ? Theme.button-hover : Theme.button-color;
+          border-radius: Theme.button-radius;
+          Text {
+            text: "Quit";
+            color: Theme.text-color;
+            font-size: 16pt;
+            font-weight: 600;
+          }
+
+        quit-button:= TouchArea {
+          height: parent.height;
+          width: parent.width;
+          }
+        }
+      }
+
+    }
+
+
+  }

@@ -119,9 +119,9 @@ impl PlayerSide {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GameStatus {
-    InProgess,
-    Winning,
-    Draw,
+    Lobby,
+    Game,
+    Winner,
 }
 
 
@@ -158,6 +158,7 @@ pub struct SlintUi {
     pub board: Vec<i32>,
     pub selected: i32,
     pub selectable: Vec<bool>,
+    pub game_status: GameStatus,
     pub targets: Vec<bool>,
     pub players: [Player; 2],
     pub turn: PlayerSide,
@@ -173,7 +174,8 @@ impl SlintUi {
         let (selectable, targets) = hints.flatten_available();
         let players = hints.players.clone();
         let turn = hints.turn;
-        Self { board, selected, selectable, targets, players, turn }
+        let game_status = hints.game_status;
+        Self { board, selected, selectable, game_status, targets, players, turn }
     }
 }
 
@@ -182,9 +184,11 @@ impl SlintUi {
 pub struct UiHints {
     selected: Option<Position>,
     available: Vec<PlayerMove>,
+    game_status: GameStatus,
     board: Vec<i32>,
     players: [Player; 2],
     turn: PlayerSide,
+
 }
 
 impl UiHints {
@@ -193,8 +197,9 @@ impl UiHints {
         let available = game.available_moves.0.clone();  
         let players = game.players.clone();
         let turn = game.turn;
+        let game_status = game.status;
 
-        Self { selected, available, board: game.board.flatten(), players, turn }  
+        Self { selected, available, game_status, board: game.board.flatten(), players, turn }  
     } 
 
     pub fn flatten_ui(&self) -> SlintUi { 

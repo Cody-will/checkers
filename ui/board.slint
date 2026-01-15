@@ -32,11 +32,15 @@ export component Board inherits VerticalBox {
                 property <int> index: row * 8 + col;
                 property <bool> is-black: Math.mod((row + col), 2) != 0;
                 property <bool> is-selectable: ui-hints.selectable[index] || ui-hints.targets[index];
-          
+                property <bool> is-selected: ui-hints.selected == index; 
                 
-                background: is-black ? Theme.black : Theme.red;
-                border-width: is-selectable || zone.has-hover ? 2px : 0px;
+                background: is-black ? Theme.background : Theme.text-color;
+                border-width: is-selectable || zone.has-hover ? 4px : 0px;
+                border-radius: is-selected || zone.has-hover || is-selected ? 4px : 0px;
                 border-color: root.ui-hints.selected == index ? Theme.selected-color : Theme.selectable-color;
+                
+                drop-shadow-color: is-selected ? rgba(244, 184, 96, 0.6) : rgba(000, 000, 000, 0);
+                drop-shadow-blur: is-selected ? 12px : 0px;
 
                 zone := TouchArea {
                     enabled: is-selectable; 

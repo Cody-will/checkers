@@ -7,6 +7,7 @@ use slint::{ ComponentHandle };
 use std::cell::RefCell;
 use std::rc::Rc;
 
+
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
  
@@ -18,6 +19,7 @@ fn main() -> Result<(), slint::PlatformError> {
     let screen_height = screen_height as i32;
     
     ui.set_screen_size(ScreenSize{screen_width, screen_height});
+    ui.set_view(View::new());
     game.borrow().sync_ui(&ui); 
  
     let game_cb = Rc::clone(&game);
