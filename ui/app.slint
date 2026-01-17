@@ -6,6 +6,7 @@ import {PlayerBox} from "./player.slint";
 import {Game} from "./game.slint";
 import {Lobby} from "./lobby.slint";
 
+
 export component AppWindow inherits Window {
     width: s_width * 1px;
     height: s_height * 1px;
@@ -25,9 +26,13 @@ export component AppWindow inherits Window {
 
     property <bool> is_red: ui_hints.turn == SlintPlayerSide.Red;
     callback player_move(SlintPosition);
+    callback start_game();
+    callback quit();
+    callback to_lobby();
     
     if view.current_view == CurrentView.Lobby: Lobby {
-      
+      start_game => {start_game();} 
+      quit => {quit();}
     }
   
     if view.current_view == CurrentView.Game: Game {
@@ -38,6 +43,8 @@ export component AppWindow inherits Window {
       piece_size: piece_size;
       ui_hints: ui_hints;
       player_move(pos) => {player_move(pos);}
+      quit() => {quit();}
+      to_lobby() => {to_lobby();}
     } 
  
     

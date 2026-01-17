@@ -1,41 +1,183 @@
 import {PlayerBox} from "./player.slint";
-import {SlintPlayerSide, FlatUi, SlintPosition} from "./structs.slint";
 import {Board} from "./board.slint";
+import {FlatUi, SlintPosition, SlintPlayerSide} from "./structs.slint";
+import {Theme} from "./config.slint";
 
-export component Game inherits HorizontalLayout {
-        in-out property <length> p_width;
-        in-out property <length> p_height;
-        in-out property <FlatUi> ui_hints;
-        in-out property <int> player_width;
-        in-out property <int> piece_size;
-        in-out property <int> board_size;
-        callback player_move(SlintPosition);
-        
-        width: p_width;
-        height: p_height;
+
+export component Game inherits Rectangle {
+    in-out property <length> p_width;
+    in-out property <length> p_height;
+    in-out property <FlatUi> ui_hints;
+    in-out property <int> player_width;
+    in-out property <int> piece_size;
+    in-out property <int> board_size;
+    in-out property <bool> paused: false;
+
+    callback player_move(SlintPosition);
+    callback to_lobby();
+    callback quit();
+
+    width: p_width;
+    height: p_height;
+ 
+    HorizontalLayout {
+        width: parent.width;
+        height: parent.height;
         horizontal-stretch: 1;
-                
+
         PlayerBox {
-          ui_hints: ui_hints; 
-          side: SlintPlayerSide.Red;
-          horizontal-stretch: 1;
-          min-width: player_width * 1px;
-          piece_size: piece_size;
-          
+            ui_hints: root.ui_hints;
+            side: SlintPlayerSide.Red;
+            horizontal-stretch: 1;
+            min-width: root.player_width * 1px;
+            piece_size: root.piece_size;
+            height: parent.height * 0.97;
         }
 
         Board {
-          height: board_size * 1px;
-          width: board_size * 1px;
-          ui_hints: ui_hints; 
-          player_move(pos) => {player_move(pos);}
+            height: root.board_size * 1px;
+            width: root.board_size * 1px;
+            ui_hints: root.ui_hints;
+            player_move(pos) => { root.player_move(pos); }
         }
-        
-        PlayerBox {
-          ui_hints: ui_hints; 
-          side: SlintPlayerSide.Black;
-          horizontal-stretch: 1;
-          min-width: player_width * 1px;
-          piece_size: piece_size;
+
+        VerticalLayout {
+            padding: 0px;
+            spacing: 0px;
+
+            PlayerBox {
+                ui_hints: root.ui_hints;
+                side: SlintPlayerSide.Black;
+                horizontal-stretch: 1;
+                min-width: root.player_width * 1px;
+                piece_size: root.piece_size;
+                height: parent.height * 0.97;
+            }
+
+            Text {
+                text: "[ESC] Menu";
+                color: Theme.text-color;
+                font-size: 10pt;
+                font-weight: 600;
+                horizontal-alignment: center;
+            }
         }
     }
+ 
+    key_listener := FocusScope {
+        width: parent.width;
+        height: parent.height; 
+        focus-on-click: true;
+        enabled: true;
+
+        init => {self.focus();}
+
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.paused = !root.paused;
+                return accept;
+            }
+            return reject;
+        }
+    }
+
+    
+    if root.paused: Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #00000066;
+
+        TouchArea {
+            width: 100%;
+            height: 100%;
+            clicked => { root.paused = false; }
+        }
+
+        Rectangle {
+            width: parent.width * 0.50;
+            height: parent.height * 0.50;
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+
+            border-width: Theme.border_width;
+            border-radius: Theme.border_radius;
+            border-color: Theme.border_color;
+            background: Theme.background;
+            VerticalLayout {
+              height: parent.height;
+              width: parent.width;
+              alignment: center;
+              spacing: 8px;
+              HorizontalLayout {
+                alignment: center;
+                Rectangle {
+                  height: root.height *0.05;
+                  width: root.width * 0.15;
+                  background: resume.has-hover ? Theme.button-hover : Theme.button-color;
+                  border-radius: Theme.button-radius;
+
+                  resume:= TouchArea {
+                    height: parent.height;
+                    width: parent.width;
+                    clicked => {root.paused = !root.paused;}
+                  }
+
+                  Text {
+                    text: "Resume";
+                    color: Theme.text-color;
+                    font-weight: 600;
+                    font-size: 16pt;
+                  }
+                }
+              }
+              HorizontalLayout {
+                alignment: center;
+                Rectangle {
+                  height: root.height *0.05;
+                  width: root.width * 0.15;
+                  background: lobby.has-hover ? Theme.button-hover : Theme.button-color;
+                  border-radius: Theme.button-radius;
+
+                  lobby:= TouchArea {
+                    height: parent.height;
+                    width: parent.width;
+                    clicked => {root.to_lobby();}
+                  }
+
+                  Text {
+                    text: "Back to Lobby";
+                    color: Theme.text-color;
+                    font-size: 16pt;
+                    font-weight: 600;
+                  }
+                }
+              }
+              HorizontalLayout {
+                alignment: center;
+                Rectangle {
+                    height: root.height *0.05;
+                    width: root.width * 0.15;
+                    background: quit.has-hover ? Theme.button-hover : Theme.button-color;
+                    border-radius: Theme.button-radius;
+                    
+
+                    quit:= TouchArea {
+                        height: parent.height;
+                        width: parent.width;
+                        clicked => {root.quit();}
+                    }
+
+                    Text {
+                      text: "Quit";
+                      color: Theme.text-color;
+                      font-size: 16pt;
+                      font-weight: 600;
+                    }
+                }
+              } 
+          }
+        }
+    }
+   
+}
+

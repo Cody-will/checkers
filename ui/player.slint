@@ -25,7 +25,7 @@ export component PlayerBox inherits VerticalBox {
           text: player.name;
           horizontal-alignment: center;
           font-size: 32pt;         
-          color: player.side == ui_hints.turn ? #00FF00 : #FFFFFF;
+          color: player.side == ui_hints.turn ? Theme.selectable-color : Theme.text-color;
         }
         for row in 6: HorizontalLayout {
             horizontal-stretch: 1;

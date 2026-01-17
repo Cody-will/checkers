@@ -4,6 +4,31 @@ use crate::game::player::Player;
 
 
 
+#[derive(Debug, Clone)]
+pub struct GameState {
+    pub state: Option<Game>,
+}
+
+impl Default for GameState {
+    fn default() -> Self {
+        Self {state: None}
+    }
+}
+
+impl GameState{
+    pub fn new() -> Self {
+       Self::default() 
+    }
+
+    pub fn start(&mut self) {
+        self.state = Some(Game::new());
+    }
+
+    pub fn end(&mut self) {
+        self.state = None;
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Position {
     pub row: i8,

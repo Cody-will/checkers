@@ -3,6 +3,9 @@ import { Theme, Images } from "./config.slint";
 
 export component Lobby inherits VerticalBox {
   
+  callback start_game();
+  callback quit();
+
   VerticalLayout {
     height: parent.height / 2;
     alignment: start;
@@ -42,6 +45,7 @@ export component Lobby inherits VerticalBox {
         play-button:= TouchArea {
           height: parent.height;
           width: parent.width;
+          clicked => {root.start_game();}
           }
 
         }
@@ -64,6 +68,7 @@ export component Lobby inherits VerticalBox {
         quit-button:= TouchArea {
           height: parent.height;
           width: parent.width;
+          clicked => {root.quit();}
           }
         }
       }
