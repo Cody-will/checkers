@@ -4,16 +4,11 @@ use crate::game::player::Player;
 
 
 
-#[derive(Debug, Clone)]
+#[derive(Default, Debug, Clone)]
 pub struct GameState {
     pub state: Option<Game>,
 }
 
-impl Default for GameState {
-    fn default() -> Self {
-        Self {state: None}
-    }
-}
 
 impl GameState{
     pub fn new() -> Self {
@@ -23,10 +18,7 @@ impl GameState{
     pub fn start(&mut self) {
         self.state = Some(Game::new());
     }
-
-    pub fn end(&mut self) {
-        self.state = None;
-    }
+ 
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -228,7 +220,7 @@ impl UiHints {
     } 
 
     pub fn flatten_ui(&self) -> SlintUi { 
-        SlintUi::new(&self)
+        SlintUi::new(self)
     }
 
     fn flatten_available(&self) -> (Vec<bool>, Vec<bool>) {

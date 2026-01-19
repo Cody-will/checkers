@@ -68,7 +68,8 @@ fn get_slides(from: &Position, board: &Board, side: &PlayerSide) -> Vec<PlayerMo
             continue;
         }
         if board.get_value(&to).is_empty() {
-            moves.push(PlayerMove::new(from.clone(), to));
+            moves.push(PlayerMove::new(*from, to));
+
         }
     }
 
@@ -100,7 +101,7 @@ pub fn get_jumps(from: &Position, board: &Board, side: &PlayerSide) -> Vec<Playe
             && !mid_square.is_empty()
             && !mid_square.is_players(side)
         {
-            jumps.push(PlayerMove::new(from.clone(), to));
+            jumps.push(PlayerMove::new(*from, to));
         }
     }
 

@@ -1,7 +1,8 @@
+#[cfg(feature = "ui")]
 use crate::{View, CurrentView};
 
 
-
+#[cfg(feature = "ui")]
 impl View {
     fn default() -> Self {
         Self { current_view: CurrentView::Lobby }

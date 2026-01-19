@@ -6,6 +6,12 @@ pub struct Board {
     pub board: Vec<Vec<Square>>,
 }
 
+impl Default for Board {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Board {
     pub fn new() -> Self {
         let mut board = Vec::with_capacity(8);

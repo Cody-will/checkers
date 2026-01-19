@@ -1,6 +1,8 @@
 use crate::game::types::{ PlayerSide, SlintUi, Square};
 use crate::game::player::Player;
 use slint::{ModelRc, VecModel};
+
+#[cfg(feature = "ui")]
 use crate::{FlatUi, SlintPlayerSide, SlintSquare, SlintPlayer};
 
 
@@ -8,7 +10,7 @@ impl SlintPlayer {
     pub fn new(player: &Player) -> Self {
         let name = slint::SharedString::from(player.name.clone());
         let side = SlintPlayerSide::new(&player.side);
-        let converted_captured: Vec<SlintSquare> = player.captured.clone().iter().map(|c| SlintSquare::new(c)).collect();
+        let converted_captured: Vec<SlintSquare> = player.captured.clone().iter().map(SlintSquare::new).collect();
         let captured = ModelRc::new(VecModel::from(converted_captured));
         Self {name, side, captured}
     }
@@ -43,7 +45,7 @@ impl FlatUi {
         let selectable = ModelRc::new(VecModel::from(hints.selectable.clone()));
         let targets = ModelRc::new(VecModel::from(hints.targets.clone()));
         let players_copy = hints.players.clone();
-        let players_converted: Vec<SlintPlayer> = players_copy.iter().map(|p| SlintPlayer::new(p)).collect();
+        let players_converted: Vec<SlintPlayer> = players_copy.iter().map(SlintPlayer::new).collect();
         let players = ModelRc::new(VecModel::from(players_converted));
         let turn = SlintPlayerSide::new(&hints.turn);
      

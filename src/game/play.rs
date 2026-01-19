@@ -2,7 +2,10 @@ use crate::game::board::Board;
 use crate::game::player::{ Player, WinningPlayer};
 use crate::game::types::{GameStatus, PlayerMove, PlayerSide, Position, PositionUsize, Square, UiHints};
 use crate::game::rules::{ForcedMoveState, get_moves, get_jumps};
+
+#[cfg(feature = "ui")]
 use crate::AppWindow;
+#[cfg(feature = "ui")]
 use crate::FlatUi;
 
 
@@ -52,6 +55,7 @@ impl Game {
         self.available_moves = (filtered, forced_state);
     }
 
+    #[cfg(feature = "ui")]
     pub fn sync_ui(&self, window: &AppWindow) {
         let ui = UiHints::new(self).flatten_ui(); 
         window.set_ui_hints(FlatUi::new(&ui)); 
@@ -88,6 +92,7 @@ impl Game {
                 self.remove_piece(&jumped_piece);
                 
                 let is_winner = self.check_win();
+                if is_winner {self.handle_win();}
 
                 let jumps = get_jumps(&new_position, &self.board, &self.turn);
 
@@ -113,6 +118,7 @@ impl Game {
                 self.remove_piece(&jumped_piece);
 
                 let is_winner = self.check_win();
+                if is_winner {self.handle_win();}
 
                 let jumps = get_jumps(&new_position, &self.board, &self.turn);
                 

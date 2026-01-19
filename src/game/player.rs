@@ -17,9 +17,7 @@ impl Player {
        if let Some(empty) = self.captured.iter_mut().rev().find(|sq| **sq == Square::Empty) {
             *empty = piece;
         } 
-
     }
-
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

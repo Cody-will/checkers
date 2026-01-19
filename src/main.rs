@@ -1,4 +1,5 @@
 slint::include_modules!();
+
 mod game;
 use rdev::display_size;
 use crate::game::types::{Position, PlayerMove, GameState};
