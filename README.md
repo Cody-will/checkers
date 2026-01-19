@@ -4,7 +4,9 @@
 <div align="center">
 
 
-# CHECKERS
+
+![Some Checkers Logo](/ui/assets/logo.png)
+
 
 <em>Master the game, conquer with confidence</em>
 
